@@ -111,5 +111,75 @@ public class YelpDao {
 		}
 	}
 	
+	public List<String> getCity() {
+		
+		String sql = "SELECT DISTINCT city "
+				+ "FROM business "
+				+ "ORDER BY city ";
+		
+		List<String> result = new ArrayList<String>();
+		
+		Connection connection = DBConnect.getConnection();
+		try {
+			PreparedStatement st = connection.prepareStatement(sql);
+			ResultSet res = st.executeQuery();
+			
+			while (res.next()) {
+				
+				result.add(res.getString("city"));
+			}
+			
+			connection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		return result;
+		
+	}
+	
+	public List<Business> getFiltereBusiness(String c) {
+		
+		String sql = "SELECT * "
+				+ "FROM business "
+				+ "WHERE city = ? ";
+		
+		List<Business> result = new ArrayList<>();
+		Connection connection = DBConnect.getConnection();
+		try {
+			PreparedStatement st = connection.prepareStatement(sql);
+			st.setString(1, c);
+			ResultSet res = st.executeQuery();
+			
+			while (res.next()) {
+				
+				String businessId = res.getString("business_id");
+				String fullAddress = res.getString("full_address");
+				String active = res.getString("active");
+				String categories = res.getString("categories");
+				String city = res.getString("city");
+				int reviewCount = res.getInt("review_count");
+				String businessName = res.getString("business_name");
+				String neighborhoods = res.getString("neighborhoods");
+				double latitude= res.getDouble("latitude");
+				double longitude = res.getDouble("longitude");
+				String state = res.getString("state");
+				double stars = res.getDouble("stars");
+				
+				result.add(new Business(businessId, fullAddress, active, categories, city, reviewCount, businessName, neighborhoods, latitude, longitude, state, stars));
+			}
+			
+			connection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		return result;
+	}
+	
 	
 }
